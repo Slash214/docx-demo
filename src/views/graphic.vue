@@ -1,10 +1,11 @@
 <template>
   <el-affix :offset="120">
     <div class="btn">
-        <el-button @click="exportWord" type="primary">导出Word文档</el-button>
+      <el-button @click="exportWord" type="primary">导出Word文档</el-button>
+      <el-button @click="router.back" type="primary">返回</el-button>
     </div>
   </el-affix>
-  <div class="main">
+  <div class="mainBox">
       <article class="item" v-for="i in state.word" :key="i.id">
         <div class="info">
             <span v-text="i.name"></span>
@@ -17,14 +18,7 @@
         </div>
       </article>
   </div>
-  <el-dialog v-model="state.downloadflag" title="下载中请稍后">
-    <div>
-        <div v-if="state.ok" style="text-align: center; margin-bottom: 20px">
-          <p>正在导出中...马上就好了,请再耐心等待</p>
-        </div>
-        <el-progress :percentage="state.percentage" :color="customColors" />
-    </div>
-  </el-dialog>
+  <Tips :percentage="state.percentage" :show="state.downloadflag" :ok="state.ok" />
 </template>
 
 <script lang="ts" setup>
@@ -33,15 +27,8 @@ import { reactive, onMounted, ref } from 'vue'
 import { getDocx } from '../api'
 import { outDocx } from '../tool/docx'
 import { saveAs } from 'file-saver'
-
-
-const customColors = [
-  { color: '#f56c6c', percentage: 20 },
-  { color: '#e6a23c', percentage: 40 },
-  { color: '#5cb87a', percentage: 60 },
-  { color: '#1989fa', percentage: 80 },
-  { color: '#6f7ad3', percentage: 100 },
-]
+import { urlToBase64 } from '../tool/common'
+import { useRouter } from 'vue-router'
 
 const state = reactive({
     word: <any>[],
@@ -50,6 +37,7 @@ const state = reactive({
     ok: <boolean>false
 })
 
+const router = useRouter()
 onMounted( async() => {
     console.log('start')
     const { data, status} = await getDocx()
@@ -93,36 +81,14 @@ const exportWord = async () => {
 
 }
 
-const urlToBase64 = (url:string) => {
-   return new Promise((resolve, reject) => {
-       let image = new Image()
-       image.setAttribute("crossOrigin",'Anonymous');
-       image.onload = () => {
-           let canvas = document.createElement('canvas')
-           canvas.width = image.width
-           canvas.height = image.height
-           canvas.getContext('2d')?.drawImage(image, 0, 0)
-           const result = canvas.toDataURL('image/png')
-           resolve(result)
-       }
-       image.src = url
-       image.onerror = () => {
-          reject(new Error('图片流异常'))
-       }
-   })
-}
 
 </script>
 
 <style lang="scss" scoped>
 .btn {
-    margin-left: 100px;
+  margin-left: 100px;
 }
-.main {
-    width: 800px;
-    min-height: 50vh;
-    margin: 20px auto;
-    padding-bottom: 80px;
+.mainBox {
     .item {
        margin-bottom: 20px;
        display: block;

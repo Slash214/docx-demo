@@ -7,3 +7,10 @@ export function getDocx() {
         method: 'GET',
     })
 }
+
+export function getTable() {
+    return request({
+        url: `${baseURL}/mock/table`,
+        method: 'GET'
+    })
+}

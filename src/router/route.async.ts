@@ -18,6 +18,12 @@ const asyncRoutes: Array<RouteRecordRaw> = [
     meta: { title: '图文案例'},
     component: () => import('views/graphic.vue')
   },
+  {
+    path: '/table',
+    name: 'table',
+    meta: { title: '表格案例'},
+    component: () => import('views/table.vue')
+  },
 ]
 
 export default asyncRoutes

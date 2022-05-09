@@ -56,3 +56,11 @@ a {
   text-decoration: none;
   cursor: pointer;
 }
+
+
+.mainBox {
+  width: 800px;
+  min-height: 50vh;
+  padding-bottom: 60px;
+  margin: 20px auto;
+}
