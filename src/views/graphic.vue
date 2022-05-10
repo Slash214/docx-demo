@@ -1,11 +1,12 @@
 <template>
-  <el-affix :offset="120">
-    <div class="btn">
-      <el-button @click="exportWord" type="primary">导出Word文档</el-button>
-      <el-button @click="router.back" type="primary">返回</el-button>
-    </div>
-  </el-affix>
   <div class="mainBox">
+      <el-affix :offset="0">
+        <div class="fix">
+          <el-button @click="exportWord" type="primary">导出Word文档</el-button>
+          <el-button @click="router.back" type="primary">返回</el-button>
+        </div>
+      </el-affix>
+
       <article class="item" v-for="i in state.word" :key="i.id">
         <div class="info">
             <span v-text="i.name"></span>
@@ -23,7 +24,7 @@
 
 <script lang="ts" setup>
 import { Packer } from 'docx'
-import { reactive, onMounted, ref } from 'vue'
+import { reactive, onMounted, watchEffect } from 'vue'
 import { getDocx } from '../api'
 import { outDocx } from '../tool/docx'
 import { saveAs } from 'file-saver'
@@ -43,15 +44,15 @@ onMounted( async() => {
     const { data, status} = await getDocx()
     state.word = data
     console.log(data)
-
 })
+
 
 const exportWord = async () => {
   state.downloadflag = !state.downloadflag
 
   let num = 0
   for (let i = 0, len = state.word.length; i < len; i++) {
-    console.log('开始了', i)
+    console.log('开始了图片循环', i)
     state.percentage = ((100 / state.word.length ) * i)<<0
     let { picture } = state.word[i] || {}
     state.word[i].imgList = []
@@ -61,7 +62,7 @@ const exportWord = async () => {
       }
     }
   }
-   
+  state.ok = true
   console.log(state.word)
   //   let data:any = []
 
@@ -70,7 +71,6 @@ const exportWord = async () => {
   Packer.toBlob(doc).then(blob => {
     saveAs(blob, '图文文档.docx')
     console.log('开始保存')
-    state.ok = true
   }).finally(() => {
     console.log('导出成功')
     state.downloadflag = !state.downloadflag
@@ -85,10 +85,19 @@ const exportWord = async () => {
 </script>
 
 <style lang="scss" scoped>
-.btn {
-  margin-left: 100px;
-}
 .mainBox {
+    .fix {
+      width: 100%;
+      transition: all .3s ease-in-out;
+      background: #fff;
+      height: 60px;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      .el-button {
+        margin-right: 20px;
+      }
+    }
     .item {
        margin-bottom: 20px;
        display: block;

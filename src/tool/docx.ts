@@ -40,10 +40,9 @@ if (base64.substring(0, 22) === 'data:image/png;base64,') {
  * @param base base64的图片 
  * @returns new ImageRun
  */
-const _genPicture = (base:string) => {
+const _genPicture = (base:string, width:number = 240) => {
   // 这里希望图片给一个宽度，高度根据宽度等比缩放
   const whp = get_size(base) 
-  const width = 240
   const height = width / whp.Proportions
   return new ImageRun({
     data: base,
@@ -64,7 +63,7 @@ const genChildren = async (data: any[]) => {
 
     let templateObj:any = {
       outlineLevel:1,
-      spacing: { line: 1.5 * 240 },
+      spacing: { line: 1.2 * 240 },
       alignment: AlignmentType.LEFT,
     }
 
@@ -77,7 +76,7 @@ const genChildren = async (data: any[]) => {
         text: name,
         break: breakValue,
         color: color3,
-        size: midtext
+        size: mintext
       }),
       new TextRun({
         text: time,
@@ -94,7 +93,7 @@ const genChildren = async (data: any[]) => {
         text: `标题：${title}`,
         break: breakValue,
         color: color3,
-        size: midtext,
+        size: mintext,
       })
     ]
     children.push(new Paragraph(templateObj))
@@ -104,17 +103,23 @@ const genChildren = async (data: any[]) => {
       new TextRun({
         text: `内容：${content}`,
         break: breakValue,
-        color: color9,
-        size: midtext,
+        color: '#666666',
+        size: mintext,
       })
     ]
     children.push(new Paragraph(templateObj))
 
-    for (let url of imgList) {
-      imgBox.push(await _genPicture(url))
-      imgBox.push(new TextRun("  "))
-    }
 
+    // for (let url of imgList) {
+    //   imgBox.push(await _genPicture(url, 180))
+    //   imgBox.push(new TextRun("  "))
+    // }
+    
+    // 这里的图文我采用 九宫格图片 一行 放 3 个
+    for (let j = 0; j < imgList.length; j++) {
+      imgBox.push(await _genPicture(imgList[j], 190))
+      if ((j + 1) % 3 !== 0) imgBox.push(new TextRun("  "))
+    }
     
 
     // 图片
@@ -122,7 +127,7 @@ const genChildren = async (data: any[]) => {
       outlineLevel: 1,
       spacing: { line: 1.5 * 240, after: 1000 },
       alignment: AlignmentType.LEFT,
-      indent: { left: 270, right: 225},
+      // indent: { left: 270, right: 225},
       children: imgBox
     })
 
@@ -135,32 +140,15 @@ const genChildren = async (data: any[]) => {
 const genTable = async (data: any[]) => {
   const children:any[] = []
 
-  // 这里是设置的表格的边框和背景色
+  // 这里是设置的表格的边框和背景色  borders 边框    borderStyles 边框样式
   let shadwhite = { fill: '#ffffff', color: "auto", }, 
-  shadf2f2 = { fill: '#f2f2f2', color: "auto", }, 
-
-  borderC = 'bbbbbb',
+  shadf2f2 = { fill: '#f2f2f2', color: "auto", }, borderC = 'bbbbbb',
+  borderStyles = { style: BorderStyle.SINGLE, size: 1, color: borderC },
   borders = {
-    top: {
-      style: BorderStyle.SINGLE,
-      size: 1,
-      color: borderC,
-    },
-    bottom: {
-      style: BorderStyle.SINGLE,
-      size: 1,
-      color: borderC,
-    },
-    left: {
-      style: BorderStyle.SINGLE,
-      size: 1,
-      color: borderC,
-    },
-    right: {
-      style: BorderStyle.SINGLE,
-      size: 1,
-      color: borderC,
-    },
+    top: borderStyles,
+    bottom:borderStyles,
+    left:borderStyles,
+    right: borderStyles,
   }
 
   for (const item of data) {
@@ -173,21 +161,20 @@ const genTable = async (data: any[]) => {
     
     if (newImg.length) {
       for (let i = 0; i < newImg.length; i++) {
-        allImages.push(await _genPicture(newImg[i]))
-        if ((i + 1) % 2 === 0) allImages.push(new TextRun({ break: 2 }))
+        allImages.push(await _genPicture(newImg[i], 187))
+        if ((i + 1) % 3 === 0) allImages.push(new TextRun({ break: 2 }))
         else allImages.push(new TextRun("  "))
       }
     }
 
     console.error('图片', allImages)
-
+    // 这里可以所以for 循环去优化哈  我这里没有扩展
     let table = new Table({ 
       rows: [
         new TableRow({
           children: [
             new TableCell({
               borders,
-              columnSpan: 0.5,
               children: [
                 new Paragraph({
                   alignment: AlignmentType.CENTER,
@@ -200,11 +187,10 @@ const genTable = async (data: any[]) => {
             }),
             new TableCell({
               borders,
-              columnSpan: 1.5,
               children: [
                 new Paragraph({
                   alignment: AlignmentType.LEFT,
-                  children: [new TextRun({ text: `${item.classname}`, size: 32 })]
+                  children: [new TextRun({ text: `${item.classname}`, size: 28 })]
                 })
               ],
               shading: shadwhite,
@@ -320,12 +306,15 @@ const genTable = async (data: any[]) => {
               columnSpan: 2,
               children: [
                 new Paragraph({
-                  alignment: AlignmentType.CENTER,
+                  alignment: AlignmentType.LEFT,
                   children: allImages
                 })
               ],
               width: { size: 100, type: WidthType.PERCENTAGE }, 
-              margins: { top: convertInchesToTwip(0.1), bottom: convertInchesToTwip(0.1)}
+              margins: { 
+                left: convertInchesToTwip(0.1), right: convertInchesToTwip(0.1),
+                top: convertInchesToTwip(0.1), bottom: convertInchesToTwip(0.1)
+              }
             }),
           ]
         })

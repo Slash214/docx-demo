@@ -14,6 +14,7 @@
 import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getDocx } from '../api'
+import { ElNotification } from 'element-plus'
 
 const router = useRouter()
 const state = reactive({
@@ -42,8 +43,14 @@ onMounted(() => {
 
 const gotoLink = (item: any) => {
   
-  if (item.name === '待开发中....') return
-  
+  if (item.name === '待开发中....') {
+    ElNotification({
+      title: '帅气的提示！',
+      message: '正在开发制作其他样式中...',
+      type: 'warning',
+    })
+    return
+  }
   router.push(item.url)
 }
 
@@ -61,29 +68,36 @@ const getItem = async () => {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%);
+  // background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%);
+  background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
   .top {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
-  line-height: 1.5;
+    width: 50%;
+    margin: 80px auto 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    line-height: 1.5;
+    text-align: justify;
+    color: #fff;
   }
 
   li { 
     list-style: none;
     text-align: center;
     border-radius: 5px;
-    background: rgb(33, 243, 201);
-    transition: box-shadow .4s ease-in-out;
-    color: #222;
+    background: #fff;
+    transition: all .4s ease-in-out;
+    color: #888;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
+    height: 150px;
+    line-height: 150px;
     &:hover {
-      transform: translateY(2);
-      box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+      transform: translateY(-8px);
+      background-color: #4facfe;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      color: #00f2fe;
     }
   }
   ul {
@@ -91,7 +105,7 @@ const getItem = async () => {
     display: block;
     margin: 100px auto;
     width: 50%;
-    height: 50%;
+    height: 60%;
     display: grid;
     grid-template-columns: 30% 30% 30%; 
     grid-template-rows: 30% 30% 30%; 

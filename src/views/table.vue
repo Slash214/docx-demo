@@ -1,11 +1,11 @@
 <template>
-<el-affix :offset="120">
-    <div class="btn">
-      <el-button @click="exportWord" type="primary">导出Word文档</el-button>
-      <el-button @click="router.back" type="primary">返回</el-button>
-    </div>
-  </el-affix>
   <div class="mainBox">
+    <el-affix :offset="0">
+      <div class="fix">
+        <el-button @click="exportWord" type="primary">导出Word文档</el-button>
+        <el-button @click="router.back" type="primary">返回</el-button>
+      </div>
+    </el-affix>
     <table class="block" v-for="v in state.tableData" :key="v.id">
         <tr>
             <td>班级</td>
@@ -29,7 +29,7 @@
         </div>
     </table>
   </div>
-  <Tips :show="state.show" :percentage="state.percentage" />
+  <Tips :show="state.show" :percentage="state.percentage" :ok="state.ok" />
 </template>
 
 <script lang="ts" setup>
@@ -45,13 +45,13 @@ const router = useRouter()
 const state = reactive({
   tableData: <any>[],
   show: false,
-  percentage: 0
+  percentage: 0,
+  ok: <boolean>false
 })
 
 
 onMounted(async () => {
   const { data } = await getTable()
-  console.log(data)
   state.tableData = data
 })
 
@@ -70,25 +70,36 @@ const exportWord = async () => {
     }
     state.tableData[i]['newImg'] = newImg
   }
-
+  state.ok = true
   console.log('封装成功', state.tableData)
-
+  
+  let wordName = '我是自定义的名称-Table文档'
   Packer.toBlob(await outTable(state.tableData)).then(blob => {
-    saveAs(blob, '图文文档.docx')
+    saveAs(blob, `${wordName}.docx`)
     console.log('开始保存')
   }).finally(() => {
     console.log('导出成功')
     state.percentage = 100
     state.show = false
+    state.ok = false
   })
 }
 </script>
 
 <style lang="scss" scoped>
-.btn {
-    margin-left: 100px;
-}
 .mainBox {
+  .fix {
+      width: 100%;
+      transition: all .3s ease-in-out;
+      background: #fff;
+      height: 60px;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      .el-button {
+        margin-right: 20px;
+      }
+    }
   .block {
     display: block;
     margin-bottom: 20px;

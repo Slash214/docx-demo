@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="props.show" title="下载中请稍后">
+  <el-dialog :close-on-click-modal="false" v-model="props.show" title="下载中请稍后" >
     <div>
         <div v-if="props.ok" style="text-align: center; margin-bottom: 20px">
           <p>正在导出中...马上就好了,请再耐心等待</p>
