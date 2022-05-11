@@ -37,6 +37,7 @@ import { Packer } from "docx"
 import { onMounted, reactive } from "vue-demi"
 import { getTable } from '../api'
 import { outTable } from '../tool/docx'
+// import { outTable } from 'easy-word'
 import { saveAs } from 'file-saver'
 import { urlToBase64 } from '../tool/common'
 import { useRouter } from "vue-router"
@@ -59,22 +60,34 @@ const exportWord = async () => {
   console.log('导出')
   state.show = true
   // 图片转base 
+
+  let word:any = []
   for (let i = 0, len = state.tableData.length; i < len; i++ ) {
-    let { imgList } = state.tableData[i] || {}
-    let newImg = []
+    let { classname, time, content, name } = state.tableData[i] || {}
+    let imgList: any = []
     state.percentage = ((100 / state.tableData.length ) * i)<<0
-    if (imgList.length) {
-      for (let img of imgList) {
-        newImg.push(await urlToBase64(img.url))
+    if (state.tableData[i].imgList.length) {
+      for (let img of state.tableData[i].imgList) {
+        imgList.push(await urlToBase64(img.url))
       }
     }
-    state.tableData[i]['newImg'] = newImg
+    // state.tableData[i]['newImg'] = imgList
+    word.push({
+      0: classname,
+      1: name,
+      2: time,
+      3: content,
+      imgList
+    })
   }
   state.ok = true
-  console.log('封装成功', state.tableData)
+  console.log('封装成功', word)
   
+
+  let caption:any = ['班级', '姓名', '时间', '描述内容']
   let wordName = '我是自定义的名称-Table文档'
-  Packer.toBlob(await outTable(state.tableData)).then(blob => {
+  let doc:any = outTable(caption, 5, word)
+  Packer.toBlob(doc).then(blob => {
     saveAs(blob, `${wordName}.docx`)
     console.log('开始保存')
   }).finally(() => {

@@ -24,9 +24,10 @@
 
 <script lang="ts" setup>
 import { Packer } from 'docx'
-import { reactive, onMounted, watchEffect } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { getDocx } from '../api'
-import { outDocx } from '../tool/docx'
+// import { outGraphic } from '../tool/docx'
+import { outGraphic } from 'easy-word'
 import { saveAs } from 'file-saver'
 import { urlToBase64 } from '../tool/common'
 import { useRouter } from 'vue-router'
@@ -50,23 +51,31 @@ onMounted( async() => {
 const exportWord = async () => {
   state.downloadflag = !state.downloadflag
 
-  let num = 0
+  let num = 0, word: any[] = []
   for (let i = 0, len = state.word.length; i < len; i++) {
     console.log('开始了图片循环', i)
     state.percentage = ((100 / state.word.length ) * i)<<0
-    let { picture } = state.word[i] || {}
-    state.word[i].imgList = []
+    let { picture, content, name, time, title } = state.word[i] || {}
+    let imgList:any = []
     if (picture.length) {
       for (let img of picture) {
-        state.word[i].imgList.push(await urlToBase64(img.url))
+        imgList.push(await urlToBase64(img.url))
       }
     }
+
+    word.push({
+      0: title,
+      1: `${time}  ${name}`,
+      2: content,
+      imgList
+    })
+
   }
   state.ok = true
-  console.log(state.word)
+  console.log(word)
   //   let data:any = []
 
-  const doc:any = await outDocx(state.word)
+  const doc:any = await outGraphic(3, word)
   console.warn('获取的', doc)
   Packer.toBlob(doc).then(blob => {
     saveAs(blob, '图文文档.docx')
