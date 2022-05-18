@@ -1,4 +1,5 @@
 import { Document, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, VerticalAlign, HeightRule, convertInchesToTwip, TableAnchorType, RelativeHorizontalPosition, OverlapType, TableLayoutType, ImageRun, convertMillimetersToTwip, Footer, PageBreak, TextWrappingType, TextWrappingSide, HorizontalPositionRelativeFrom, VerticalPositionRelativeFrom, HorizontalPositionAlign, VerticalPositionAlign, Tab } from "docx"
+import { text } from "stream/consumers";
 
 
 /**
@@ -249,6 +250,7 @@ const _genTable = async (caption: string[], row: number, data: any[]) => {
  const outTable = async (caption: string[], row: number, data: any[]) => {
   try {
     let children:any = await _genTable(caption, row, data)
+    
     return new Document({ sections: [{ children }] })
   } catch (error) {
     console.error('Word文档生成失败', error)
@@ -256,6 +258,16 @@ const _genTable = async (caption: string[], row: number, data: any[]) => {
   }
 }
 
+
+const outIrrge = async (data: any[], len: number) => {
+  try {
+    let children:any = await _genIrrtable(data, len)
+    return new Document({ sections: [{ children }] })
+  } catch (error) {
+    console.error('Word文档生成失败', error)
+    return error
+  }
+}
 
 
 /**
@@ -274,6 +286,115 @@ const _genTable = async (caption: string[], row: number, data: any[]) => {
   }
 }
 
+
+const _genIrrtable = async (data:any[], len: number) => {
+  let children:any[] = []
+  let borderC = 'bbbbbb', borderStyles = { style: BorderStyle.SINGLE, size: 1, color: borderC },
+  borders = {
+    top: borderStyles,
+    bottom:borderStyles,
+    left:borderStyles,
+    right: borderStyles,
+  }
+
+  // for (let item of data) {
+  //   let rows: any[] = []
+  //   let b:any[] = []
+  //   let c: any = new TableCell({
+  //     borders,
+  //     children: [
+  //       new Paragraph({
+  //         alignment: AlignmentType.CENTER,
+  //         children: [
+  //           new TextRun({
+  //             text: `${item.field}`,
+  //             size: 30,
+  //           }),
+  //         ]
+  //       })
+  //     ],
+  //     verticalAlign: VerticalAlign.CENTER,
+  //     width: { size: 100, type: WidthType.PERCENTAGE }, 
+  //     margins: {
+  //       top: convertInchesToTwip(0.1), bottom: convertInchesToTwip(0.1),
+  //       left: convertInchesToTwip(0.1), right: convertInchesToTwip(0.1),
+  //     },
+  //     rowSpan: item.arr.length
+  //   })
+  //   b.push(c)
+  //   let arr1 = [], arr2 = []
+  //   for (let k of item.arr) {
+  //      arr1.push(
+  //       new TextRun({
+  //         text: `${k.title}`,
+  //         size: 30,
+  //         break: 1,
+  //       }),
+  //      )
+
+  //      arr2.push(
+  //       new TextRun({
+  //         text: `${k.count}`,
+  //         size: 30,
+  //         break: 1,
+  //       }),
+  //      )
+  //   }
+  //   let d: any = new TableCell({
+  //     borders,
+  //     children: [
+  //       new Paragraph({
+  //         spacing: { line: 1.3 * 240 },
+  //         alignment: AlignmentType.CENTER,
+  //         children: arr1
+  //       })
+  //     ],
+  //     width: { size: 100, type: WidthType.PERCENTAGE }, 
+  //     margins: {
+  //       top: convertInchesToTwip(0.1), bottom: convertInchesToTwip(0.1),
+  //       left: convertInchesToTwip(0.1), right: convertInchesToTwip(0.1),
+  //     },
+  //   })
+    
+  //   let p: any = new TableCell({
+  //     borders,
+  //     children: [
+  //       new Paragraph({
+  //         spacing: { line: 1.3 * 240 },
+  //         alignment: AlignmentType.CENTER,
+  //         children: arr2
+  //       })
+  //     ],
+  //     width: { size: 100, type: WidthType.PERCENTAGE }, 
+  //     margins: {
+  //       top: convertInchesToTwip(0.1), bottom: convertInchesToTwip(0.1),
+  //       left: convertInchesToTwip(0.1), right: convertInchesToTwip(0.1),
+  //     },
+  //   })
+  //   b.push(d)
+  //   b.push(p)
+  //   rows.push(new TableRow({ children: b }))
+  //   let table = new Table({ rows })
+  //   children.push(table)
+  // }
+
+  for (let item of data) {
+    let rows: any[] = []
+    let brow: any[] = []
+    item.arr.forEach((e: any, key:number) => {
+      if (key === 0) {
+
+      } else {
+
+      }
+    })
+    rows.push(new TableRow({ children: brow }))
+    let table = new Table({ rows })
+    children.push(table)
+  }
+
+  return children
+}
 
 const _genContent = async (row: number, data: any[]) => {
     let children:any[] = []
@@ -334,7 +455,9 @@ const _genContent = async (row: number, data: any[]) => {
 
 
 
+
 export {
   outGraphic,
-  outTable
+  outTable,
+  outIrrge
 }

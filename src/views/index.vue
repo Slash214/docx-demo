@@ -23,7 +23,7 @@ const state = reactive({
   list: <any>[
     {id: 1, name: '图文Word案例', url: '/graphic'},
     {id: 2, name: '表格Word案例', url: '/table' },
-    {id: 3, name: '待开发中....', url: '/' },
+    {id: 3, name: '不规则表格案例', url: '/irreg' },
     {id: 4, name: '待开发中....', url: '/' },
     {id: 5, name: '待开发中....', url: '/' },
     {id: 6, name: '待开发中....', url: '/' },

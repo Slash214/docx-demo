@@ -24,6 +24,12 @@ const asyncRoutes: Array<RouteRecordRaw> = [
     meta: { title: '表格案例'},
     component: () => import('views/table.vue')
   },
+  {
+    path: '/irreg',
+    name: 'irreg',
+    meta: { title: '不规则表格案例'},
+    component: () => import('views/irregular.vue')
+  },
 ]
 
 export default asyncRoutes

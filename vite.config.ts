@@ -13,6 +13,9 @@ export default defineConfig({
     AutoImport(),
     Components(),
   ],
+  server: {
+    open: true
+  },
   resolve: {
     alias: {
       '@': pathResolve('./src'),

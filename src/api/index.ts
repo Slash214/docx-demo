@@ -14,3 +14,10 @@ export function getTable() {
         method: 'GET'
     })
 }
+
+export function getIrrge() {
+    return request({
+        url: `${baseURL}/mock/irrge`,
+        method: 'GET'
+    })
+}

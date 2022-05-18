@@ -36,8 +36,8 @@
 import { Packer } from "docx"
 import { onMounted, reactive } from "vue-demi"
 import { getTable } from '../api'
-import { outTable } from '../tool/docx'
-// import { outTable } from 'easy-word'
+// import { outTable } from '../tool/docx'
+import { outTable } from 'easy-word'
 import { saveAs } from 'file-saver'
 import { urlToBase64 } from '../tool/common'
 import { useRouter } from "vue-router"
@@ -60,8 +60,9 @@ const exportWord = async () => {
   console.log('导出')
   state.show = true
   // 图片转base 
-
+  
   let word:any = []
+  
   for (let i = 0, len = state.tableData.length; i < len; i++ ) {
     let { classname, time, content, name } = state.tableData[i] || {}
     let imgList: any = []
@@ -84,6 +85,7 @@ const exportWord = async () => {
   console.log('封装成功', word)
   
 
+  // return
   let caption:any = ['班级', '姓名', '时间', '描述内容']
   let wordName = '我是自定义的名称-Table文档'
   let doc:any = outTable(caption, 5, word)
