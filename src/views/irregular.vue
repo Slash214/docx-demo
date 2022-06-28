@@ -35,8 +35,8 @@ import { Packer } from "docx";
 import { onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { getIrrge } from '../api'
-import { outIrrge } from '../tool/docx'
-import { gen } from '../tool/tsd'
+// import { outIrrge } from '../tool/docx'
+import { gen } from '../tool/tsd'  // 包文件暂未开发
 import { saveAs } from 'file-saver'
 
 const router = useRouter()

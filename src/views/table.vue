@@ -36,7 +36,7 @@
 import { Packer } from "docx"
 import { onMounted, reactive } from "vue-demi"
 import { getTable } from '../api'
-// import { outTable } from '../tool/docx'
+// import { outTable } from '../tool/docx'  
 import { outTable } from 'easy-word'
 import { saveAs } from 'file-saver'
 import { urlToBase64 } from '../tool/common'

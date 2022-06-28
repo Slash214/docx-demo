@@ -26,8 +26,8 @@
 import { Packer } from 'docx'
 import { reactive, onMounted } from 'vue'
 import { getDocx } from '../api'
-// import { outGraphic } from '../tool/docx'
-import { outGraphic } from 'easy-word'
+// import { outGraphic } from '../tool/docx' 自己自定义
+import { outGraphic } from 'easy-word'  // 包文件导出方法
 import { saveAs } from 'file-saver'
 import { urlToBase64 } from '../tool/common'
 import { useRouter } from 'vue-router'
