@@ -88,8 +88,10 @@ const exportWord = async () => {
   // return
   let caption:any = ['班级', '姓名', '时间', '描述内容']
   let wordName = '我是自定义的名称-Table文档'
-  let doc:any = outTable(caption, 5, word)
+  let doc:any = await outTable(caption, 5, word)
+  
   Packer.toBlob(doc).then(blob => {
+    console.log('blob', blob)
     saveAs(blob, `${wordName}.docx`)
     console.log('开始保存')
   }).finally(() => {
