@@ -120,8 +120,7 @@ const genChildren = async (data: any[]) => {
     for (let j = 0; j < imgList.length; j++) {
       imgBox.push(await _genPicture(imgList[j], 190))
       if ((j + 1) % 3 !== 0) imgBox.push(new TextRun("  "))
-    }
-    
+    }  
 
     // 图片
     let picture = new Paragraph({

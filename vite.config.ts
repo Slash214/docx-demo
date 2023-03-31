@@ -14,7 +14,8 @@ export default defineConfig({
     Components(),
   ],
   server: {
-    open: true
+    open: true,
+    port: 4500,
   },
   resolve: {
     alias: {

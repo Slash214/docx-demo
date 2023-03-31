@@ -13,6 +13,12 @@ const asyncRoutes: Array<RouteRecordRaw> = [
     component: () => import('views/index.vue')
   },
   {
+    path: '/imagetext',
+    name: 'imagetext',
+    meta: { title: '图文文档案例'},
+    component: () => import('views/ImageText.vue')
+  },
+  {
     path: '/graphic',
     name: 'graphic',
     meta: { title: '图文案例'},

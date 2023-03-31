@@ -21,3 +21,14 @@ export function getIrrge() {
         method: 'GET'
     })
 }
+
+
+/**
+ * 获取word图文数据
+ */
+export const getImageText = () => {
+    return request({
+        url: `${baseURL}/v1/imagetext`,
+        method: 'GET'
+    })
+}
