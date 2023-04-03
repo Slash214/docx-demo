@@ -11,7 +11,7 @@
                 <p>{{ item.desc }}</p>
                 <div class="imglist">
                     <div class="img-item" v-for="items of item.imgList">
-                        <img :src="items.url" alt="" />
+                        <img :src="items" alt="" />
                     </div>
                 </div>
             </div>
@@ -22,10 +22,9 @@
 </template>
 
 <script setup lang="ts">
-
 import { onMounted, reactive, ref } from 'vue'
 import { getImageText } from '../api'
-import { wordImage } from '../tool/Image';
+import { wordImage, wordImage2 } from '../tool/Image'
 import { outWord } from '../tool/word'
 
 interface List {
@@ -33,7 +32,7 @@ interface List {
     time: string
     desc: string
     title: string
-    imgList: { url: string }[]
+    imgList: []
 }
 
 let state = reactive({
@@ -58,75 +57,90 @@ const download = async () => {
     console.log('开始下载')
 
     // outWord()
-    wordImage([1,2,3,4,5,6,7,8,9])
-    return
+    // wordImage([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    // return
     // 可以考虑使用for...of循环而不是Promise.all()来处理图像数组。
     //  这是因为Promise.all()并行处理所有承诺，如果您有大量图像需要处理，则可能效率低下。
 
     // 100 图片内  2800 毫秒
     // 1000 数组 9000 图片
-    // const startTime = performance.now()
-    // const data = await Promise.all(
-    //     list.value.map(async (item) => {
-    //         const newImgList = await Promise.all(
-    //             item.imgList.map(async (img) => {
-    //                 const base64Url = await urlToBase64(img.url)
-    //                 return { url: base64Url }
-    //             }),
-    //         )
-    //         return { ...item, imgList: newImgList }
-    //     }),
-    // )
+    const startTime = performance.now()
+    state.downloadflag = true
+    const data = await Promise.all(
+        list.value.map(async (item, index) => {
+         state.percentage = (100 / list.value.length) * (index + 1)
+            const newImgList = await Promise.all(
+                item.imgList.map(async (img) => {
+                    const base64Url = await convertUrlToBase64(img, 190)
+                    return base64Url 
+                }),
+            )
+            return { ...item, imgList: newImgList }
+        }),
+    )
 
+    const endTime = performance.now()
+    const executionTime = endTime - startTime
+    // console.log(data)
+    wordImage2(data)
+    console.log(`Execution time: ${executionTime} milliseconds`)
+
+    // 执行速度：4200-4300 毫秒
+    // state.downloadflag = true
+    // const startTime = performance.now()
+    // const data = []
+    // for (const [index, item] of list.value.entries()) {
+    //     state.percentage = (100 / list.value.length) * (index + 1)
+    //     const newImgList = []
+    //     for (const img of item.imgList) {
+    //         const base64Url = await urlToBase64(img.url)
+    //         newImgList.push({ url: base64Url })
+    //     }
+    //     data.push({ ...item, imgList: newImgList })
+    // }
     // const endTime = performance.now()
     // const executionTime = endTime - startTime
     // console.log(data)
-
+    // state.percentage = 100
     // console.log(`Execution time: ${executionTime} milliseconds`)
-
-    // 执行速度：4200-4300 毫秒
-    state.downloadflag = true
-    const startTime = performance.now()
-    const data = []
-    for (const [index, item] of list.value.entries()) {
-        state.percentage = (100 / list.value.length) * (index + 1)
-        const newImgList = []
-        for (const img of item.imgList) {
-            const base64Url = await ConvertPadBase64(img.url)
-            newImgList.push({ url: base64Url })
-        }
-        data.push({ ...item, imgList: newImgList })
-    }
-    const endTime = performance.now()
-    const executionTime = endTime - startTime
-    console.log(data)
-    state.percentage = 100
-    console.log(`Execution time: ${executionTime} milliseconds`)
 }
 
-const ConvertPadBase64 = (url: string) => {
-  let tempImage = new Image()
-  tempImage.crossOrigin = '*'
-  tempImage.src = url
+
+/**
+ * 将图片 URL 转换为 Base64 格式
+ * @param {string} imageUrl 图片 URL
+ * @param {number} [width] 缩放后的宽度
+ * @returns {Promise<string>} 图片的 Base64 格式
+ */
+ async function convertUrlToBase64(imageUrl: string, width?: number): Promise<string> {
   return new Promise((resolve, reject) => {
-    tempImage.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = tempImage.width;
-      canvas.height = tempImage.height;
-      const ctx = canvas.getContext("2d");
-      ctx?.drawImage(tempImage, 0, 0, tempImage.width, tempImage.height);
-      const ext = tempImage.src.substring(tempImage.src.lastIndexOf(".") + 1).toLowerCase();
-      const dataURL = canvas.toDataURL("image/" + ext);
-      resolve(dataURL)
-    }
-    tempImage.onerror = (err) => {
-      reject(err)
-    }
-  }).catch((e) => {
-    console.error('图片错误', e)
-    return null
-  })
+    const img = new Image();
+    // 允许跨域
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let { naturalWidth, naturalHeight } = img;
+      // 如果传入了宽度，则等比缩放
+      if (width) {
+        const scale = width / naturalWidth;
+        naturalWidth *= scale;
+        naturalHeight *= scale;
+      }
+      canvas.width = naturalWidth;
+      canvas.height = naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0, naturalWidth, naturalHeight);
+      const dataURL = canvas.toDataURL();
+      resolve(dataURL);
+    };
+    img.onerror = (e) => {
+      reject(e);
+    };
+    img.src = imageUrl;
+  });
 }
+
+
 </script>
 
 <style scoped lang="scss">

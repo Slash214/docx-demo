@@ -14,6 +14,7 @@ import { Packer } from "docx";
  * @param bold: 是否加粗
  * @param italics: 是否倾斜
  * @param alignment: 段落对齐方式
+ * @param pageBreak: 是否分页
  */
 interface IParagraphOptions {
 	text: string;
@@ -23,6 +24,7 @@ interface IParagraphOptions {
 	bold?: boolean;
 	italics?: boolean;
 	alignment?: docx.AlignmentType;
+	pageBreak?: boolean
 }
 
 
@@ -40,6 +42,7 @@ function createParagraph(options: IParagraphOptions) {
 		bold = false,
 		italics = false,
 		alignment = docx.AlignmentType.LEFT,
+		pageBreak = false
 	} = options;
 
 	const Text = new docx.TextRun({
@@ -49,10 +52,16 @@ function createParagraph(options: IParagraphOptions) {
 		color,
 		size: fontSize,
 		font: fontName,
+		
 	})
 
+	const children = [Text]
+	if (pageBreak) {
+		children.push(new docx.PageBreak())
+	}
+
 	const paragraph = new docx.Paragraph({
-		children: [Text],
+		children,
 		alignment,
 		spacing: {
 			before: 200,
@@ -63,7 +72,9 @@ function createParagraph(options: IParagraphOptions) {
 	return paragraph;
 }
 
-
+export {
+	createParagraph
+}
 
 export const outWord = () => {
 

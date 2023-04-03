@@ -16,6 +16,7 @@ export default defineConfig({
   server: {
     open: true,
     port: 4500,
+    cors: true
   },
   resolve: {
     alias: {
