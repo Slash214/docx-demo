@@ -24,8 +24,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { getImageText } from '../api'
-import { wordImage, wordImage2 } from '../tool/Image'
-import { outWord } from '../tool/word'
+import { outGridWord } from '../tool';
+import { wordImage } from '../tool/Image'
+import { testSSSTable } from '../utils/Table';
 
 interface List {
     id: number
@@ -56,6 +57,8 @@ const getData = async () => {
 const download = async () => {
     console.log('开始下载')
 
+    testSSSTable()
+    return
     // outWord()
     // wordImage([1, 2, 3, 4, 5, 6, 7, 8, 9])
     // return
@@ -71,7 +74,7 @@ const download = async () => {
          state.percentage = (100 / list.value.length) * (index + 1)
             const newImgList = await Promise.all(
                 item.imgList.map(async (img) => {
-                    const base64Url = await convertUrlToBase64(img, 190)
+                    const base64Url = await convertUrlToBase64(img)
                     return base64Url 
                 }),
             )
@@ -82,7 +85,7 @@ const download = async () => {
     const endTime = performance.now()
     const executionTime = endTime - startTime
     // console.log(data)
-    wordImage2(data)
+    outGridWord(data)
     console.log(`Execution time: ${executionTime} milliseconds`)
 
     // 执行速度：4200-4300 毫秒

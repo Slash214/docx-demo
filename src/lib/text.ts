@@ -1,10 +1,9 @@
 /**
  * @author 爱呵呵
- * @descrion 关于docx 段落导出
+ * @descrion 生成docx.Paragraph段落 
  */
 
 import * as docx from "docx";
-import { Packer } from "docx";
 
 /**
  * @param text: 段落文本内容
@@ -52,7 +51,7 @@ function createParagraph(options: IParagraphOptions) {
 		color,
 		size: fontSize,
 		font: fontName,
-		
+
 	})
 
 	const children = [Text]
@@ -76,39 +75,3 @@ export {
 	createParagraph
 }
 
-export const outWord = () => {
-
-
-	const arr = []
-
-	for (let i = 0; i < 100; i++) {
-		arr.push(
-			createParagraph({
-				text: `哦哦哦哦哦阿斯弗内容内容${i}`,
-				fontSize: 50,
-				color: '#888888'
-			})
-		)
-	}
-
-	const doc = new docx.Document({
-		sections: [{
-			children: arr
-		}],
-	})
-
-	Packer.toBlob(doc).then(blob => {
-		const url = window.URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = "example.docx";
-		// 添加链接到DOM
-		document.body.appendChild(link);
-
-		// 触发下载
-		link.click();
-
-		// 释放URL对象
-		window.URL.revokeObjectURL(url);
-	})
-}

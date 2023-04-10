@@ -1,9 +1,9 @@
 /**
  * @author 爱呵呵
+ * @descrion 生成docx.ImageRun 图片返回
  */
 
 import { ImageRun } from "docx"
-
 
 /**
  * 取得base64图片长宽与长宽比例
@@ -61,17 +61,16 @@ const scaleSize = (base64: string) => {
 	};
 }
 
-
-
-const createImageRun = (base64: string): ImageRun => {
-
-    let whp = scaleSize(base64)
-    let newHeight = 170 / whp.Proportions
-    let width = 170
+const createImageRun = (base64: string, imgWidth?: number): ImageRun => {
+	// 固定图片容器大小
+	let width = 170
+	if (imgWidth) width = imgWidth
+	let whp = scaleSize(base64)
+	let newHeight = width / whp.Proportions
 	return new ImageRun({
 		data: base64,
 		transformation: {
-			width: width,
+			width,
 			height: newHeight
 		}
 	})

@@ -1,22 +1,27 @@
 /**
- * 生成table方法
- * @descrion 
+ * @descrion 生成九宫格表格 动态修改为 2x2 和 3x3 显示
  * @author 爱呵呵
  */
 
-import { Paragraph, Table, TableCell, TableRow, WidthType, ImageRun, BorderStyle, AlignmentType, VerticalAlignElement, VerticalAlign } from "docx"
-import { createImageRun } from './base/img'
+import { Paragraph, Table, TableCell, TableRow, WidthType, BorderStyle, AlignmentType, VerticalAlign } from "docx"
+import { createImageRun } from './image'
 
 const createImageGrid = (images: Array<any>) => {
 	const tableRows = []
 
 	// 根据图片数量计算表格的行列
 	const count = images.length,
-		cols = Math.ceil(Math.sqrt(count)),
-		rows = Math.ceil(count / cols)
+		  isEven = count % 2 === 0
+		 
+	let cols = isEven ? 2 : 3,
+	    rows = Math.ceil(count / cols)	
+	
+	if (count > 9) {
+		cols = 3
+		rows = 3
+	}
 
 	let index = 0
-
 
 	// 默认的cell表格颜色
 	const cellBorder = {
@@ -27,12 +32,13 @@ const createImageGrid = (images: Array<any>) => {
 
 	// 默认的间隔
 	const defaultMargin = {
-		top: 100,
-		bottom: 100,
-		right: 100,
-		left: 100,
+		top: 200,
+		bottom: 200,
+		right: 200,
+		left: 200,
 	}
 
+	let width = isEven ? 240 : 170 
 
 	// 构造表格
 	for (let i = 0; i < rows; i++) {
@@ -41,7 +47,7 @@ const createImageGrid = (images: Array<any>) => {
 		for (let j = 0; j < cols; j++) {
 			const url = images[index] || ''
 			// console.warn('获取的图片', url)
-			const image = createImageRun(url)
+			const image = createImageRun(url, width)
 			const cell = new TableCell({
 				children: [new Paragraph({
 					children: [image],
@@ -91,9 +97,7 @@ const createImageGrid = (images: Array<any>) => {
 		},
 		rows: tableRows
 	})
-
-	console.warn(table)
-
+	// console.warn(table)
 	return table
 }
 

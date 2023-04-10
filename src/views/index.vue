@@ -26,7 +26,7 @@ const state = reactive({
         { id: 2, name: '表格文档案例', url: '/table' },
         { id: 3, name: '不规则表格案例', url: '/irreg' },
         { id: 4, name: '图文案例', url: '/imagetext' },
-        { id: 5, name: '待开发中....', url: '/' },
+        { id: 5, name: '展示组件', url: '/comp' },
         { id: 6, name: '待开发中....', url: '/' },
         { id: 7, name: '待开发中....', url: '/' },
         { id: 8, name: '待开发中....', url: '/' },

@@ -36,6 +36,12 @@ const asyncRoutes: Array<RouteRecordRaw> = [
     meta: { title: '不规则表格案例'},
     component: () => import('views/irregular.vue')
   },
+  {
+    path: '/comp',
+    name: 'comp',
+    meta: { title: '组件展示'},
+    component: () => import('views/testCompents.vue')
+  },
 ]
 
 export default asyncRoutes

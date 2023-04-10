@@ -1,7 +1,5 @@
 import * as docx from "docx";
 import { Packer, Paragraph, Document } from "docx";
-import { createParagraph } from './word'
-import { createImageGrid } from './table'
 
 const genImage = (img: string): docx.ImageRun => {
 	// let w = 0, h = 0
@@ -146,41 +144,4 @@ export const wordImage = (images: any[]) => {
 	})
 }
 
-
-export const wordImage2 = (data: any) => {
-	
-	const children: any = []
-
-
-	for (let [index, item] of data.entries()) {
-		children.push(createParagraph({ text: item.title, color: '#888888', fontSize: 40 }))
-		children.push(createParagraph({ text: item.time, color: '#474747', fontSize: 32 }))
-		children.push(createParagraph({ text: item.desc, color: '#999999', fontSize: 28 }))
-		// console.log(index)
-		children.push(createImageGrid(item.imgList))
-		children.push(createParagraph({ text: '', pageBreak: true }))
-        // console.warn(item)
-		// 表格
-	}
-	const doc = new Document({
-		sections: [
-		   { children }
-	   ]
-	})
-	
-	Packer.toBlob(doc).then(blob => {
-		const url = window.URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = "example.docx";
-		// 添加链接到DOM
-		document.body.appendChild(link);
-
-		// 触发下载
-		link.click();
-
-		// 释放URL对象
-		window.URL.revokeObjectURL(url);
-	})
-}
 
