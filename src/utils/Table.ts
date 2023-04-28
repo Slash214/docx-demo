@@ -10,7 +10,9 @@ import {
 	WidthType,
 	Packer,
 	TextRun,
+	VerticalAlign,
 } from "docx";
+import { createImageGrid } from "../lib/grid";
 import { createParagraph } from "../lib/text";
 
 interface ICellData {
@@ -40,6 +42,13 @@ function createTableCell(
 		children: Array.isArray(text) ? text : [new Paragraph(text)],
 		width: { size: width, type },
 		columnSpan: merge ? 2 : 1,
+		borders: {
+			top: { size: 1, color: '#bbbbbb', style: BorderStyle.SINGLE },
+			bottom: { size: 1, color: '#bbbbbb', style: BorderStyle.SINGLE },
+			left: { size: 1, color: '#bbbbbb', style: BorderStyle.SINGLE },
+			right: { size: 1, color: '#bbbbbb', style: BorderStyle.SINGLE },
+		},
+		verticalAlign:VerticalAlign.CENTER
 	});
 }
 
@@ -50,16 +59,21 @@ function createTableRow(cells: TableCell[], cantSplit = false): TableRow {
 	});
 }
 
-function createTable(data: ITableData): Table {
+function createTable(data: ITableData, other: any): Table {
 	const { headers, rows, widths, mergeRows } = data;
-
+    
 	const tableRows = [
-		createTableRow([createTableCell('标题哦', 20, false), createTableCell('内容哦--', 80, false)]
-		),
 		createTableRow([createTableCell('标题哦', 20, false), createTableCell('内容哦--', 80, false)]),
 		createTableRow([createTableCell('标题哦', 20, false), createTableCell('内容哦--', 80, false)]),
 		createTableRow([createTableCell('标题哦', 20, false), createTableCell('内容哦--', 80, false)]),
 		createTableRow([createTableCell('标题哦', 20, false), createTableCell('内容哦--', 80, false)]),
+		createTableRow([createTableCell('标题哦', 20, false), createTableCell('内容哦--', 80, false)]),
+		createTableRow([createTableCell([
+			createParagraph({ text: '你让谁的ask的贷款2312312的'}),
+			createParagraph({ text: '你让谁的ask的贷款2312312的'}),
+			createParagraph({ text: '你让谁的ask的贷款2312312的' }),
+			createImageGrid(other[0].imgList)
+		], 100, true)]),
 		createTableRow([createTableCell([createParagraph({ text: '啦啦啦啦啦啦大苏打大苏打' }), createParagraph({ text: '啦啦啦啦啦啦大苏打大苏打' })], 100, true)], true),
 	]
 
@@ -69,7 +83,13 @@ function createTable(data: ITableData): Table {
 			size: 100,
 			type: WidthType.PERCENTAGE,
 		},
-		margins: {},
+		margins: {
+			top: 200,
+			left: 200,
+			right: 200,
+			bottom: 200,
+		},
+		alignment: AlignmentType.CENTER,
 		borders: {
 			top: { size: 1, style: BorderStyle.SINGLE, color: "#bbbbbb" },
 			bottom: { size: 1, style: BorderStyle.SINGLE, color: "#bbbbbb" },
@@ -100,12 +120,10 @@ const tableData = [
 
 
 
-export const testSSSTable = () => {
+export const testSSSTable = (data: any) => {
 
-
-	const table = createTable({
-		rows: tableData,
-	})
+	console.log('data-------', data)
+	const table = createTable(tableData,data)
 
 
 	const doc = new Document({

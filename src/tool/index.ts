@@ -59,9 +59,6 @@ export const outGridWord = (data: any) => {
 	})
 }
 
-
-
-
 /** */
 interface ObservationRecord {
 	type: string;

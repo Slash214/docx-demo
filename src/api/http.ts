@@ -1,6 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
-// import { ElMessage } from 'element-plus'
-// import { MyResponseType } from '@/typings'
 
 // 创建实例
 const service: AxiosInstance = axios.create({
@@ -14,8 +12,8 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         // TODO 在这里可以加上想要在请求发送前处理的逻辑
-       // TODO 比如 loading 等
-       return config; 
+        // TODO 比如 loading 等
+        return config;
     },
     (error: AxiosError) => {
         return Promise.reject(error)

@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./src/components/Select.vue')['default']
     Tips: typeof import('./src/components/Tips.vue')['default']
+    WordPage: typeof import('./src/components/WordPage.vue')['default']
   }
 }
 

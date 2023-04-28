@@ -57,8 +57,8 @@ const getData = async () => {
 const download = async () => {
     console.log('开始下载')
 
-    testSSSTable()
-    return
+    // testSSSTable()
+    // return
     // outWord()
     // wordImage([1, 2, 3, 4, 5, 6, 7, 8, 9])
     // return
@@ -85,7 +85,8 @@ const download = async () => {
     const endTime = performance.now()
     const executionTime = endTime - startTime
     // console.log(data)
-    outGridWord(data)
+    testSSSTable(data)
+    // outGridWord(data)
     console.log(`Execution time: ${executionTime} milliseconds`)
 
     // 执行速度：4200-4300 毫秒
