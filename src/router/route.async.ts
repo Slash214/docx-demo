@@ -42,6 +42,12 @@ const asyncRoutes: Array<RouteRecordRaw> = [
     meta: { title: '组件展示'},
     component: () => import('views/testCompents.vue')
   },
+  {
+    path: '/photoalbum',
+    name: 'photoalbum',
+    meta: { title: '组件展示'},
+    component: () => import('views/PhotoAlbum.vue')
+  },
 ]
 
 export default asyncRoutes

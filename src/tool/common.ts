@@ -1,4 +1,4 @@
-const urlToBase64 = (url:string) => {
+const urlToBase64 = (url:string): Promise<string> => {
     return new Promise((resolve, reject) => {
         let image = new Image()
         image.setAttribute("crossOrigin",'Anonymous');

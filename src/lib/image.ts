@@ -3,7 +3,16 @@
  * @descrion 生成docx.ImageRun 图片返回
  */
 
-import { ImageRun } from "docx"
+import { HorizontalPositionAlign, ImageRun, VerticalPositionAlign } from "docx"
+
+/**
+ * 用于确定图片应该如何对齐的枚举
+ */
+enum ImageAlignment {
+	Left = "LEFT",
+	Center = "CENTER",
+	Right = "RIGHT"
+}
 
 /**
  * 取得base64图片长宽与长宽比例
@@ -61,21 +70,44 @@ const scaleSize = (base64: string) => {
 	};
 }
 
+/**
+ * 创建一个新的图片对象
+ * @param base64 - 一个base64编码的图像
+ * @param imgWidth - 图像的宽度（可选）
+ * @param alignment - 图像应该如何对齐（默认为左对齐）
+ * @returns 一个新的ImageRun对象
+ */
 const createImageRun = (base64: string, imgWidth?: number): ImageRun => {
 	// 固定图片容器大小
 	let width = 170
 	if (imgWidth) width = imgWidth
 	let whp = scaleSize(base64)
 	let newHeight = width / whp.Proportions
+	// const horizontalAlignment =
+	// 	alignment === ImageAlignment.Center ? HorizontalPositionAlign.CENTER :
+	// 		alignment === ImageAlignment.Right ? HorizontalPositionAlign.RIGHT :
+	// 			HorizontalPositionAlign.LEFT;
 	return new ImageRun({
 		data: base64,
 		transformation: {
 			width,
 			height: newHeight
-		}
+		},
+		// floating: {
+		// 	zIndex: 0,
+		// 	behindDocument: false,
+		// 	allowOverlap: true,
+		// 	horizontalPosition: {
+		// 		align: horizontalAlignment,
+		// 	},
+		// 	verticalPosition: {
+		// 		align: VerticalPositionAlign.CENTER,
+		// 	},
+		// },
 	})
 }
 
 export {
-	createImageRun
+	createImageRun,
+	ImageAlignment
 }

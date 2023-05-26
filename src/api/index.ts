@@ -32,3 +32,13 @@ export const getImageText = () => {
         method: 'GET'
     })
 }
+
+/**
+ * 新版图文数据
+ */
+export const getNewData = () => {
+    return request({
+        url: `${baseURL}/v1/new/phtotalbum`,
+        method: 'GET'
+    })
+}
