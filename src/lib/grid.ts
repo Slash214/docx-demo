@@ -1,21 +1,21 @@
 /**
- * @descrion 生成九宫格表格 
  * @author 爱呵呵
+ * 创建九宫格图片
+ * @param images 图片的base64数组
+ * @param layout 布局类型, 默认为2，接受2或3，代表2x2或3x3布局
+ * @param withBackground 是否添加背景色， 默认不添加
+ * @returns 返回Table对象
  */
 
 import { Paragraph, Table, TableCell, TableRow, WidthType, BorderStyle, AlignmentType, VerticalAlign } from "docx"
 import { createImageRun } from './image'
 
-const createImageGrid = (images: Array<any>) => {
+
+const createImageGrid = (images: Array<string>, layout: number = 2, withBackground: boolean = false) => {
 	const tableRows = []
 
-	// 根据图片数量计算表格的行列
-	const count = images.length,
-		cols = Math.ceil(Math.sqrt(count)),
-		rows = Math.ceil(count / cols)
-
-	let index = 0
-
+	// 根据布局类型计算图片尺寸
+	const cellSize = layout === 2 ? 240 : 170
 
 	// 默认的cell表格颜色
 	const cellBorder = {
@@ -32,15 +32,14 @@ const createImageGrid = (images: Array<any>) => {
 		left: 200,
 	}
 
-
-	// 构造表格
-	for (let i = 0; i < rows; i++) {
-		console.error(i)
+	// 生成九宫格
+	for (let i = 0; i < layout; i++) {
 		const cells = []
-		for (let j = 0; j < cols; j++) {
-			const url = images[index] || ''
-			// console.warn('获取的图片', url)
-			const image = createImageRun(url)
+		for (let j = 0; j < layout; j++) {
+			const index = i * layout + j
+			if (index >= images.length) break
+			const url = images[index]
+			const image = createImageRun(url, cellSize)
 			const cell = new TableCell({
 				children: [new Paragraph({
 					children: [image],
@@ -48,11 +47,11 @@ const createImageGrid = (images: Array<any>) => {
 				})],
 				verticalAlign: VerticalAlign.CENTER,
 				margins: defaultMargin,
-				shading: {
+				shading: withBackground ? {
 					fill: '#f2f2f2'
-				},
+				} : undefined,
 				width: {
-					size: 100 / cols,
+					size: 100 / layout,
 					type: WidthType.PERCENTAGE,
 				},
 				borders: {
@@ -64,10 +63,6 @@ const createImageGrid = (images: Array<any>) => {
 			})
 
 			cells.push(cell)
-			index++
-
-			if (index >= count) break
-
 		}
 
 		const row = new TableRow({
@@ -90,7 +85,7 @@ const createImageGrid = (images: Array<any>) => {
 		},
 		rows: tableRows
 	})
-	// console.warn(table)
+
 	return table
 }
 

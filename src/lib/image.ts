@@ -3,16 +3,8 @@
  * @descrion 生成docx.ImageRun 图片返回
  */
 
-import { HorizontalPositionAlign, ImageRun, VerticalPositionAlign } from "docx"
+import { ImageRun, } from "docx"
 
-/**
- * 用于确定图片应该如何对齐的枚举
- */
-enum ImageAlignment {
-	Left = "LEFT",
-	Center = "CENTER",
-	Right = "RIGHT"
-}
 
 /**
  * 取得base64图片长宽与长宽比例
@@ -35,33 +27,6 @@ const scaleSize = (base64: string) => {
 	if (type === 'png') {
 		width = (view[16] << 24) + (view[17] << 16) + (view[18] << 8) + view[19];
 		height = (view[20] << 24) + (view[21] << 16) + (view[22] << 8) + view[23];
-	} else if (type === 'jpeg' || type === 'jpg') {
-		let i = 0;
-		while (view[i] === 255 && view[i + 1] === 216) {
-			i += 2;
-			while (view[i] !== 255) {
-				i++;
-			}
-			while (view[i] === 255) {
-				i++;
-			}
-			const marker = view[i];
-			i += 2;
-			if ((marker & 0xf0) === 0xc0 || (marker & 0xf0) === 0xd0 || (marker & 0xf0) === 0xe0) {
-				height = (view[i] << 8) + view[i + 1];
-				width = (view[i + 2] << 8) + view[i + 3];
-				break;
-			}
-			i += (view[i] << 8) + view[i + 1];
-		}
-	} else if (type === 'gif') {
-		width = (view[7] << 8) + view[6];
-		height = (view[9] << 8) + view[8];
-	} else if (type === 'bmp') {
-		width = (view[21] << 24) + (view[20] << 16) + (view[19] << 8) + view[18];
-		height = (view[25] << 24) + (view[24] << 16) + (view[23] << 8) + view[22];
-	} else {
-		throw Error('unsupported image type');
 	}
 	return {
 		width,
@@ -69,6 +34,7 @@ const scaleSize = (base64: string) => {
 		Proportions: width / height
 	};
 }
+
 
 /**
  * 创建一个新的图片对象
@@ -81,33 +47,16 @@ const createImageRun = (base64: string, imgWidth?: number): ImageRun => {
 	// 固定图片容器大小
 	let width = 170
 	if (imgWidth) width = imgWidth
-	let whp = scaleSize(base64)
-	let newHeight = width / whp.Proportions
-	// const horizontalAlignment =
-	// 	alignment === ImageAlignment.Center ? HorizontalPositionAlign.CENTER :
-	// 		alignment === ImageAlignment.Right ? HorizontalPositionAlign.RIGHT :
-	// 			HorizontalPositionAlign.LEFT;
+	const whp = scaleSize(base64)
 	return new ImageRun({
 		data: base64,
 		transformation: {
 			width,
-			height: newHeight
+			height: width / whp.Proportions
 		},
-		// floating: {
-		// 	zIndex: 0,
-		// 	behindDocument: false,
-		// 	allowOverlap: true,
-		// 	horizontalPosition: {
-		// 		align: horizontalAlignment,
-		// 	},
-		// 	verticalPosition: {
-		// 		align: VerticalPositionAlign.CENTER,
-		// 	},
-		// },
 	})
 }
 
 export {
-	createImageRun,
-	ImageAlignment
+	createImageRun
 }

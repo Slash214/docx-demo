@@ -37,16 +37,16 @@ const asyncRoutes: Array<RouteRecordRaw> = [
     component: () => import('views/irregular.vue')
   },
   {
-    path: '/comp',
-    name: 'comp',
-    meta: { title: '组件展示'},
-    component: () => import('views/testCompents.vue')
-  },
-  {
     path: '/photoalbum',
     name: 'photoalbum',
     meta: { title: '组件展示'},
     component: () => import('views/PhotoAlbum.vue')
+  },
+  {
+    path: '/laboratory',
+    name: 'laboratory',
+    meta: { title: '实验室'},
+    component: () => import('views/laboratory.vue')
   },
 ]
 

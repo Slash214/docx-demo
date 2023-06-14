@@ -1,13 +1,14 @@
-import { Packer, Document, AlignmentType, Paragraph } from "docx";
+import { Packer, Document, AlignmentType, Paragraph, Indent } from "docx";
 import { FileChild } from "docx/build/file/file-child";
-// import { createParagraph } from '../lib/text'
-// import { createImageGrid } from '../lib/grid'
 import { createImageGrid } from '../lib/dynamicGrid'
 import { createBackgroundImageParagraph } from "../lib/backgroundImage";
 import { createParagraph } from '../lib/newText'
+import { createUserInfoTable } from '../lib/coverInfo'
 import { urlToBase64 } from "./common";
-import { createImageRun, ImageAlignment } from "../lib/image";
-import { createMultiTextParagraph } from "../lib/multitext";
+import { createImageRun } from "../lib/image";
+import { saveAs } from "file-saver";
+import { imageToBase64 } from "../utils";
+
 /**
  * 导出九宫格word {title， time， desc， imgList，} 后续优化
  * @param data 
@@ -20,16 +21,16 @@ export const outGridWord = (data: any) => {
 			createParagraph({
 				text: item.title,
 				color: '#888888',
-				fontSize: 40
+				font: '40'
 			}),
 			createParagraph({
 				text: item.time,
 				color: '#474747',
-				fontSize: 32
+				font: '32'
 			}),
 			createParagraph({
 				text: item.desc,
-				fontSize: 28,
+				font: '28',
 				color: '#999999'
 			}),
 			createImageGrid(item.imgList)
@@ -86,6 +87,7 @@ interface Cover {
 	startTime: string;
 	endTime: string;
 	bgImg: string;
+	contentImg: string;
 }
 
 interface Children {
@@ -129,10 +131,12 @@ export const outPhotoAlbum = async (items: PhotoAlbum) => {
 	const childrens: FileChild[] = []
 
 	// 封面
-	let { bgImg = '', schoolName, startTime, endTime, name, className } = cover
-	const url: any = await urlToBase64(bgImg)
+	let { bgImg = '', schoolName, startTime, endTime, name, className, contentImg } = cover
+	const url = await imageToBase64(bgImg)
+	const url2 = await imageToBase64(contentImg)
 	// console.warn(url)
 	const bg = createBackgroundImageParagraph(url)
+	const contentBg = createBackgroundImageParagraph(url2)
 	const title = createParagraph({
 		size: 44,
 		text: schoolName,
@@ -154,7 +158,7 @@ export const outPhotoAlbum = async (items: PhotoAlbum) => {
 	// 儿童信息
 	const userName2 = createParagraph({ size: 48, text: name, spacingBefore: 400 })
 	const avatarParagraph = new Paragraph({
-		children: [createImageRun(await urlToBase64(children.avatar), 230),
+		children: [createImageRun(await imageToBase64(children.avatar), 230),
 		],
 		alignment: AlignmentType.CENTER,
 		spacing: {
@@ -168,47 +172,60 @@ export const outPhotoAlbum = async (items: PhotoAlbum) => {
 		{ t1: `生日：${children.birthday}`, t2: `生肖：${children.chineseZodiac}` },
 		{ t1: `身高：${children.height}`, t2: `体重：${children.weight}` },
 	]
-	childrens.push(bg, userName2, avatarParagraph)
 
-	const c:any = []
-	arr.forEach(async (item) => {
-		const line = createMultiTextParagraph({
-			texts: [item.t1, item.t2],
-			fontSize: 32,
-			alignment: AlignmentType.LEFT,
-			spacingBefore: 200,
-			spacingAfter: 200,
-			spaceBetweenTexts: 10,
-		})
+	const table = createUserInfoTable(arr)
+	const likes = [
+		`我喜欢的动物：${children.animal}`,
+		`我喜欢的游戏：${children.game}`,
+		`我喜欢的颜色：${children.color}`
+	]
+	childrens.push(contentBg, userName2, avatarParagraph, table)
+	likes.forEach(item => {
+		childrens.push(
+			createParagraph({
+				indent: { left: 1400 },
+				text: item, font: '32', spacingBefore: 400, spacingAfter: 400
+			})
+		)
+	})
+	childrens.push(createParagraph({ text: '', pageBreak: true }))
 
-		c.push(line)
-	})
-	const parentParagraph = new Paragraph({
-		alignment: AlignmentType.CENTER,
-		children: c
-	})
-	console.log(parentParagraph)
-	childrens.push(parentParagraph)
 	// 记录内容
+	for (const item of data) {
+		const time = createParagraph({ text: item.time, bold: true, spacingAfter: 400 });
+		const content = createParagraph({ text: item.content, spacingAfter: 300, line:  1.5 });
+		const imgBase64Promises = item.imgList.map(url => imageToBase64(url));
+		const imgBase64Array = await Promise.all(imgBase64Promises);
+
+		const imgTable = createImageGrid(imgBase64Array);
+		childrens.push(contentBg, time, content, imgTable, createParagraph({ text: '', spacingAfter: 400 }));
+	}
 
 	// 封底
+	const lastTitleParagraph = createParagraph({ font: '32', text: '教师寄语', bold: true, spacingAfter: 400 })
+	const lastContent1 = createParagraph({ text: desc.teacherMessage, font: '26', spacingAfter: 1000, line: 1.5 })
+	const lastTitleParent = createParagraph({ text: '爸爸妈妈的鼓励与期望', font: '32', bold: true, spacingAfter: 400 })
+	const lastContent2 = createParagraph({ text: desc.teacherMessage, font: '26', spacingAfter: 400, line: 1.5 })
+	childrens.push(contentBg, lastTitleParagraph, lastContent1, lastTitleParent, lastContent2)
 
 	const doc = new Document({
 		sections: [{ children: childrens }]
 	})
 
+	console.warn('start download')
 	Packer.toBlob(doc).then(blob => {
-		const url = window.URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = "新版的图文.docx";
-		// 添加链接到DOM
-		document.body.appendChild(link);
+		saveAs(blob, '新版图文.docx')
+		// const url = window.URL.createObjectURL(blob);
+		// const link = document.createElement('a');
+		// link.href = url;
+		// link.download = "新版的图文.docx";
+		// // 添加链接到DOM
+		// document.body.appendChild(link);
 
-		// 触发下载
-		link.click();
+		// // 触发下载
+		// link.click();
 
-		// 释放URL对象
-		window.URL.revokeObjectURL(url);
+		// // 释放URL对象
+		// window.URL.revokeObjectURL(url);
 	})
 }

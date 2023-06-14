@@ -1,9 +1,8 @@
-import * as docx from 'docx';
-
 /**
  * 选项接口，定义了用于创建段落的各种选项
  * @author 爱呵呵
  */
+import * as docx from 'docx';
 interface IParagraphOptions {
 	text: string;
 	font?: string;
@@ -15,6 +14,8 @@ interface IParagraphOptions {
 	pageBreak?: boolean;
 	spacingBefore?: number;
 	spacingAfter?: number;
+	line?: number;
+	indent?: docx.IIndentAttributesProperties | undefined;
 }
 
 /**
@@ -31,6 +32,8 @@ const defaultParagraphOptions: IParagraphOptions = {
 	pageBreak: false,
 	spacingBefore: 100,
 	spacingAfter: 100,
+	indent: undefined,
+	line: 1
 }
 
 /**
@@ -50,26 +53,37 @@ const defaultParagraphOptions: IParagraphOptions = {
  */
 function createParagraph(options: IParagraphOptions): docx.Paragraph {
 	// 将提供的选项和默认选项合并
-	const { text, ...rest } = { ...defaultParagraphOptions, ...options };
+	// const { text, ...rest } = { ...defaultParagraphOptions, ...options };
+
+    // 将提供的选项和默认选项合并
+	const { text, font, size, color, bold, italics, alignment,
+		pageBreak, spacingBefore, spacingAfter, indent, line = 1 } =
+		{ ...defaultParagraphOptions, ...options };
 
 	const textRun = new docx.TextRun({
 		text,
-		...rest,
+		font,
+		size,
+		bold,
+		italics,
+		color
 	});
 
 	const children: (docx.TextRun | docx.PageBreak)[] = [textRun];
 
-	if (rest.pageBreak) {
+	if (pageBreak) {
 		children.push(new docx.PageBreak());
 	}
 
 	return new docx.Paragraph({
 		children,
-		alignment: rest.alignment,
+		alignment,
 		spacing: {
-			before: rest.spacingBefore,
-			after: rest.spacingAfter,
+			before: spacingBefore,
+			after: spacingAfter,
+			line: line * 240
 		},
+		indent,
 	});
 }
 

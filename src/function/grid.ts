@@ -1,5 +1,5 @@
 import { Table, BorderStyle, TableCell, Paragraph, Alignment, VerticalAlign, WidthType, TableRow } from 'docx'
-import { createImageRun } from "./image";
+import { createImageRun } from "../lib/image";
 
 
 const createImageGrid = async (images: Array<string>, pageWidth: number = 612, pageMargin: number = 72) => {
@@ -66,48 +66,12 @@ const createImageGrid = async (images: Array<string>, pageWidth: number = 612, p
 			})
 			cells.push(cell)
 			index++
-			if (index > count) break
+			if (index >= count) break
 		}
 		const row = new TableRow({
 			children: cells
 		})
 		tableRows.push(row)
-
-		
-		// if (index < rows - 1) {
-		// 	const blankRow = new TableRow({
-		// 		children: [new TableCell({
-		// 			children: [new Paragraph('')],
-		// 			shading: {
-		// 				fill: '#ffffff'
-		// 			},
-		// 			width: {
-		// 				size: tableWidth,
-		// 				type: WidthType.DXA,
-		// 			},
-		// 			borders: {
-		// 				top: {
-		// 					size: 0,
-		// 					style: BorderStyle.NONE,
-		// 				},
-		// 				bottom: {
-		// 					size: 0,
-		// 					style: BorderStyle.NONE,
-		// 				},
-		// 				left: {
-		// 					size: 0,
-		// 					style: BorderStyle.NONE,
-		// 				},
-		// 				right: {
-		// 					size: 0,
-		// 					style: BorderStyle.NONE,
-		// 				},
-		// 			},
-		// 		})]
-		// 	})
-
-		// 	tableRows.push(blankRow)
-		// }
 	}
 
 	// 创建表格对象

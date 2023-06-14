@@ -24,8 +24,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { getImageText } from '../api'
-import { outGridWord } from '../tool';
-import { wordImage } from '../tool/Image'
 import { testSSSTable } from '../utils/Table';
 
 interface List {

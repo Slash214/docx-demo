@@ -26,10 +26,7 @@
 import { Packer } from 'docx'
 import { reactive, onMounted } from 'vue'
 import { getDocx } from '../api'
-// import { outGraphic } from '../tool/docx' 自己自定义
-import { outGraphic } from 'easy-word' // 包文件导出方法
 import { saveAs } from 'file-saver'
-import { urlToBase64 } from '../tool/common'
 import { useRouter } from 'vue-router'
 import { generateWordDocWithImageAndText } from '../utils/docx-exporter'
 import { imageToBase64 } from '../utils'
@@ -64,13 +61,11 @@ const exportWord = async () => {
     }
 
     console.error(data)
-    // return
 
     console.log(state.word)
     Packer.toBlob(await generateWordDocWithImageAndText(data))
         .then((blob) => {
             saveAs(blob, '图文文档.docx')
-            console.log('开始保存')
         })
         .finally(() => {
             console.log('导出成功')
